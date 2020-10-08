@@ -1,8 +1,13 @@
+# sql_credentials = {
+#     'database':'postgres',
+#     'user':'postgres',
+#     'password':'quartzite!',
+#     'host':'/cloudsql/friendship-playlist-104:us-west2:spotify-db-lite'
+# }
 sql_credentials = {
-    'database':'postgres',
+    'database':'spotify_db',
     'user':'postgres',
-    'password':'quartzite!',
-    'host':'/cloudsql/friendship-playlist-104:us-west2:spotify-db-lite'
+    'password':'damara1004',
 }
 
 spotify_credentials = {
