@@ -11,8 +11,6 @@ import json
 import requests
 from genre_replace import genre_replace
 from sklearn.metrics.pairwise import cosine_similarity
-from plotly.offline import plot
-import plotly.graph_objs as go
 
 client_credentials_manager = SpotifyClientCredentials(client_id=spotify_credentials['client_id'],client_secret=spotify_credentials['client_secret'])
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
@@ -609,68 +607,4 @@ def format_dataframe(user_a_df,user_b_df,recommendations):
 
 	combined = pd.concat([formatted_a,formatted_b,formatted_r],ignore_index=True)
 	return combined
-
-def generate_plot(combined):
-	fig = go.Figure()
-	fig.add_trace(go.Violin(x=combined['feature'][combined['user']=='user a'],
-							y=combined['value'][combined['user']=='user a'],
-							name="Friend 1",
-							))
-
-	fig.add_trace(go.Violin(x=combined['feature'][combined['user']=='user b'],
-							y=combined['value'][combined['user']=='user b'],
-							name="Friend 2",
-							))
-
-	fig.add_trace(go.Violin(x=combined['feature'][combined['user']=='result'],
-							y=combined['value'][combined['user']=='result'],
-							name="Recommendations",
-							))
-
-	fig.update_traces(box_visible=True, meanline_visible=True)
-	fig.update_layout(title={'text': "Comparison of Audio Features",'yanchor':'middle','x':0.52},
-					  	 		xaxis_title="Audio Features",yaxis_title="Normalized Feature Values",violinmode='group',font=dict(size=12),
-					  	 		autosize=False,width=700,height=400,margin=dict(l=50,r=10,b=10,t=40,pad=1),
-								legend={'orientation': "h",'y':-0.2,'x':0.22})
-
-	return plot(fig,output_type='div')
-
-#======PLOT UTILS======#
-pop_rock = {'trace_1':{'x':['danceability', 'danceability', 'danceability', 'energy', 'energy', 'energy', 'tempo', 'tempo', 'tempo', 'valence', 'valence', 'valence'],
-					   'y':[0.70948, 0.85321, 0.63609, 0.92092, 0.54755, 0.65265, 0.48739, 0.41979, 0.3026, 0.71903, 0.82679, 0.56898]},
-			'trace_2':{'x':['danceability', 'danceability', 'danceability', 'energy', 'energy', 'energy', 'tempo', 'tempo', 'tempo', 'valence', 'valence', 'valence'],
-					   'y':[0.51172, 0.66667, 0.7421, 0.91191, 0.80981, 0.93994, 0.47821, 0.46945, 0.46592, 0.72508, 0.66566, 0.97382]},
-			'trace_3':{'x':['danceability', 'danceability', 'danceability', 'danceability', 'danceability', 'danceability', 'danceability', 'energy', 'energy', 'energy', 'energy', 'energy', 'energy', 'energy', 'tempo', 'tempo', 'tempo', 'tempo', 'tempo', 'tempo', 'tempo', 'valence', 'valence', 'valence', 'valence', 'valence', 'valence', 'valence'],
-					   'y':[0.6738, 0.70642, 0.6524, 0.51886, 0.69623, 0.88685, 0.67074, 0.92492, 0.82282, 0.86386, 0.94995, 0.93694, 0.6016, 0.6977, 0.48134, 0.36002, 0.41786, 0.51847, 0.42952, 0.4128, 0.56952, 0.92044, 0.74622, 0.70493, 0.70997, 0.62336, 0.77442, 0.46022]}
-			}
-
-rock_hh = {'trace_1':{'x':['danceability', 'danceability', 'danceability', 'energy', 'energy', 'energy', 'tempo', 'tempo', 'tempo', 'valence', 'valence', 'valence'],
-					   'y':[0.65545, 0.3629, 0.60347, 0.84885, 0.92392, 0.76677, 0.66412, 0.60622, 0.39516, 0.90937, 0.23364, 0.33031]},
-		   'trace_2':{'x':['danceability', 'danceability', 'danceability', 'energy', 'energy', 'energy', 'tempo', 'tempo', 'tempo', 'valence', 'valence', 'valence'],
-					   'y':[0.7421, 0.85117, 0.78491, 0.97397, 0.62563, 0.5045, 0.32571, 0.37283, 0.70362, 0.9718, 0.35247, 0.76234]},
-		   'trace_3':{'x':['danceability', 'danceability', 'danceability', 'danceability', 'danceability', 'danceability', 'energy', 'energy', 'energy', 'energy', 'energy', 'energy', 'tempo', 'tempo', 'tempo', 'tempo', 'tempo', 'tempo', 'valence', 'valence', 'valence', 'valence', 'valence', 'valence', 'valence'],
-					   'y':[0.80734, 0.52599, 0.50051, 0.56677, 0.58512, 0.90928, 0.9368, 0.62462, 0.85385, 0.86386, 0.80781, 0.82482, 0.5966, 0.97497, 0.42581, 0.49183, 0.58996, 0.47217, 0.44451, 0.61449, 0.42178, 0.37261, 0.16314, 0.34743, 0.84995, 0.65458, 0.90131, 0.89023]}
-			}
-
-mixed = {'trace_1':{'x':['danceability', 'danceability', 'danceability', 'energy', 'energy', 'energy', 'tempo', 'tempo', 'tempo', 'valence', 'valence', 'valence'],
-					'y':[0.79817, 0.55352, 0.44241, 0.57958, 0.86987, 0.8969, 0.49156, 0.41286, 0.60913, 0.66465, 0.75932, 0.68882]},
-		'trace_2':{'x':['danceability', 'danceability', 'danceability', 'energy', 'energy', 'energy', 'tempo', 'tempo', 'tempo', 'valence', 'valence', 'valence'],
-				   'y':[0.77778, 0.87156, 0.59021, 0.80681, 0.84685, 0.50751, 0.42201, 0.50231, 0.60257, 0.56294, 0.89627, 0.61329]},
-		'trace_3':{'x':['danceability', 'danceability', 'danceability', 'danceability', 'danceability', 'danceability', 'danceability', 'energy', 'energy', 'energy', 'energy', 'energy', 'energy', 'energy', 'tempo', 'tempo', 'tempo', 'tempo', 'tempo', 'tempo', 'tempo', 'valence', 'valence', 'valence', 'valence', 'valence', 'valence'],
-				   'y':[0.60143, 0.74108, 0.39246, 0.43323, 0.6524, 0.64424, 0.64164, 0.58258, 0.95095, 0.81782, 0.66266, 0.73073, 0.43969, 0.60609, 0.36794, 0.7043, 0.54378, 0.37265, 0.65559, 0.63343, 0.42598, 0.67271, 0.66767, 0.35549]}
-			}
-
-# def demo_case(query_a, query_b):
-# 	if (query_a == "Bad Romance, Lady Gaga; Fantasy, Mariah Carey; Cry Me a River, Justin Timberlake") & (query_b == "Smells Like Teen Spirit, Nirvana; Island In the Sun, Weezer; Never Let You Go, Third Eye Blind"):
-
-# 		return df
-
-# 	elif (query_a == "The Middle, Jimmy Eat World; Mr. Brightside, The Killers; Californication, Red Hot Chili Peppers") & (query_b == "Hey Ya, OutKast; In My Feelings, Drake; Waterfalls, TLC"):
-
-# 		return df
-
-# 	elif (query_a == "Call Me Maybe, Carly Rae Jepsen; Dancing Queen, ABBA; All The Small Things, blink-182") & (query_b == "Electric Feel, MGMT; Got To Give It Up, Marvin Gaye; Hotel California, Eagles"):
-
-# 		return df
-
 		
