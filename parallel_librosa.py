@@ -2,13 +2,15 @@ import pandas as pd
 import numpy as np
 from multiprocessing import Pool
 import librosa
-import time
+import os
 
-def librosa_pipeline(track_id):
+def librosa_pipeline(track):
 
 	'''Takes in a song's Spotify track id, locates its audio file, and runs
 	the audio file through the librosa feature extraction process. 
 	Returns the feature vector as a dict, with track id as the key'''
+	
+	track_id = str(track).replace("track_","").replace(".wav","")
 	
 	path = f'data/audio_files/track_{track_id}.wav'
 
@@ -44,27 +46,16 @@ def librosa_pipeline(track_id):
 
 
 if __name__ == '__main__':
-	with Pool(4) as pool:
-		sample = ['00aU27MSKcDLw7cwdoxnek', '00Ci0EXS4fNPnkTbS6wkOh', '0aeIg30ygRdW6zUCmAdgzO',
-				'0cNJ3huiV99wvUN1tmQLTL', '0DW8r8w96IoIsxqqV2VNXf', '0rXrWanGm9AaXVMrG3A35S']
+	path = 'data/audio_files'
 
-		# features = []
-		
-		start = time.time()
-		res = pool.map_async(librosa_pipeline, sample)
-		pool.close()
-		pool.join()
-		out = res.get()
-		end = time.time()
-		print(f"Map Async: {end-start}")
+	files = [filename for filename in os.listdir(path)]
+	for i in range(0,len(files),5):
+		chunk = files[i:i+5]
 
-	with Pool(4) as pool:
-		
-		start = time.time()
-		results = [pool.apply_async(librosa_pipeline, args=(track,)) for track in sample]
-		output = [p.get() for p in results]
-		end = time.time()
-		print(f"Apply Async: {end-start}")
+		with Pool(4) as pool:
+			results = [pool.apply_async(librosa_pipeline, args=(track,)) for track in chunk]
+			output = [p.get() for p in results]
 
-
-		# features.extend(out)
+			for o in output:
+				with open('results.txt','a') as out:
+					out.write(str(o) + "," + "\n")
